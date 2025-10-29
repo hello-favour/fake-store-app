@@ -1,5 +1,6 @@
 import 'package:fake_store/core/utils/custom_app_bar.dart';
 import 'package:fake_store/presentation/pages/user/user_bloc.dart';
+import 'package:fake_store/presentation/widgets/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -21,6 +22,7 @@ class _ProductPageState extends State<ProductPage> {
   void initState() {
     super.initState();
     context.read<ProductBloc>().add(LoadProducts());
+    context.read<UserBloc>().add(LoadCachedUser());
     context.read<UserBloc>().add(const LoadUser(1));
   }
 
@@ -41,10 +43,7 @@ class _ProductPageState extends State<ProductPage> {
                 ),
               );
             }
-            return const Text(
-              'Loading...',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-            );
+            return const SizedBox.shrink();
           },
         ),
       ),
@@ -61,11 +60,14 @@ class _ProductPageState extends State<ProductPage> {
                 children: [
                   Text(state.message),
                   const Gap(16),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<ProductBloc>().add(LoadProducts());
-                    },
-                    child: const Text('Retry'),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: AppButton(
+                      isPrimary: true,
+                      text: 'Retry',
+                      onPressed: () =>
+                          context.read<ProductBloc>().add(LoadProducts()),
+                    ),
                   ),
                 ],
               ),

@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:fake_store/data/repositories/user_repository.dart';
 import 'package:injectable/injectable.dart';
 import '../../../data/repositories/auth_repository.dart';
 
@@ -9,8 +10,9 @@ part 'auth_state.dart';
 @injectable
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
+  final UserRepository _userRepository;
 
-  AuthBloc(this._authRepository) : super(AuthInitial()) {
+  AuthBloc(this._authRepository, this._userRepository) : super(AuthInitial()) {
     on<CheckAuthStatus>(_onCheckAuthStatus);
     on<LoginRequested>(_onLoginRequested);
     on<LogoutRequested>(_onLogoutRequested);
@@ -49,6 +51,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     await _authRepository.logout();
+    await _userRepository.clearUser();
     emit(AuthUnauthenticated());
   }
 }
