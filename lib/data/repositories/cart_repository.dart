@@ -16,12 +16,10 @@ class CartRepository {
     );
 
     if (existingIndex != -1) {
-      // Product already in cart, increase quantity
       _cartItems[existingIndex] = _cartItems[existingIndex].copyWith(
         quantity: _cartItems[existingIndex].quantity + 1,
       );
     } else {
-      // Add new product to cart
       _cartItems.add(CartItemModel(product: product, quantity: 1));
     }
   }

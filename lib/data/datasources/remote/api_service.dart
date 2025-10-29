@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:fake_store/data/models/login_response.dart';
 import 'package:fake_store/data/models/product_model.dart';
+import 'package:fake_store/data/models/user_model.dart';
 import 'package:injectable/injectable.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import '../../../../core/constants/api_constants.dart';
@@ -61,6 +62,15 @@ class ApiService {
     try {
       final response = await _dio.get(ApiConstants.productDetail(id));
       return ProductModel.fromJson(response.data);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<UserModel> getUserById(int id) async {
+    try {
+      final response = await _dio.get(ApiConstants.userById(id));
+      return UserModel.fromJson(response.data);
     } catch (e) {
       rethrow;
     }

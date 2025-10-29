@@ -1,4 +1,5 @@
 import 'package:fake_store/core/utils/custom_app_bar.dart';
+import 'package:fake_store/presentation/pages/user/user_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -20,17 +21,31 @@ class _ProductPageState extends State<ProductPage> {
   void initState() {
     super.initState();
     context.read<ProductBloc>().add(LoadProducts());
+    context.read<UserBloc>().add(const LoadUser(1));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.colorWhite,
-      appBar: const CustomAppBar(
+      appBar: CustomAppBar(
         title: 'Welcome,',
-        subtitle: Text(
-          'Username',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+        subtitle: BlocBuilder<UserBloc, UserState>(
+          builder: (context, userState) {
+            if (userState is UserLoaded) {
+              return Text(
+                userState.user.username,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
+              );
+            }
+            return const Text(
+              'Loading...',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            );
+          },
         ),
       ),
       body: BlocBuilder<ProductBloc, ProductState>(
