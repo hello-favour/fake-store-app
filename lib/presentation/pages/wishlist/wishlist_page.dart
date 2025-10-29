@@ -81,7 +81,7 @@ class _WishlistPageState extends State<WishlistPage> {
                       child: AppButton(
                         isPrimary: true,
                         text: 'Start Shopping',
-                        onPressed: () => context.pop(),
+                        onPressed: () => context.go('/products'),
                       ),
                     ),
                   ],
@@ -112,24 +112,6 @@ class _WishlistPageState extends State<WishlistPage> {
 
           return const SizedBox();
         },
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1,
-        onTap: (index) {
-          if (index == 0) context.go('/products');
-          if (index == 2) context.push('/cart');
-        },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Wishlist',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag),
-            label: 'Cart',
-          ),
-        ],
       ),
     );
   }

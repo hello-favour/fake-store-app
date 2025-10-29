@@ -7,8 +7,10 @@ import 'package:fake_store/presentation/pages/login/login_page.dart';
 import 'package:fake_store/presentation/pages/products/product_bloc.dart';
 import 'package:fake_store/presentation/pages/products/product_detail_page.dart';
 import 'package:fake_store/presentation/pages/products/product_page.dart';
+import 'package:fake_store/presentation/pages/user/user_bloc.dart';
 import 'package:fake_store/presentation/pages/wishlist/wishlist_bloc.dart';
 import 'package:fake_store/presentation/pages/wishlist/wishlist_page.dart';
+import 'package:fake_store/presentation/widgets/main_scaffold.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../di/injection.dart';
@@ -21,7 +23,6 @@ final GoRouter appRouter = GoRouter(
     final isOnGetStarted = state.matchedLocation == '/';
     final isOnLogin = state.matchedLocation == '/login';
 
-    // If logged in and trying to access get started or login, redirect to products
     if (isLoggedIn && (isOnGetStarted || isOnLogin)) {
       return '/products';
     }
@@ -41,15 +42,41 @@ final GoRouter appRouter = GoRouter(
         child: const LoginPage(),
       ),
     ),
-    GoRoute(
-      path: '/products',
-      builder: (context, state) => MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (context) => getIt<ProductBloc>()),
-          BlocProvider(create: (context) => getIt<CartBloc>()),
-        ],
-        child: const ProductPage(),
-      ),
+    ShellRoute(
+      builder: (context, state, child) {
+        final location = state.matchedLocation;
+
+        if (location.startsWith('/wishlist')) {
+        } else if (location.startsWith('/cart')) {
+        } else if (location.startsWith('/products')) {}
+
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (context) => getIt<UserBloc>()),
+            BlocProvider(create: (context) => getIt<ProductBloc>()),
+            BlocProvider(create: (context) => getIt<CartBloc>()),
+            BlocProvider(create: (context) => getIt<WishlistBloc>()),
+          ],
+          child: const MainScaffold(),
+        );
+      },
+      routes: [
+        GoRoute(
+          path: '/products',
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: ProductPage()),
+        ),
+        GoRoute(
+          path: '/wishlist',
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: WishlistPage()),
+        ),
+        GoRoute(
+          path: '/cart',
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: CartPage()),
+        ),
+      ],
     ),
     GoRoute(
       path: '/product-detail/:id',
@@ -60,20 +87,6 @@ final GoRouter appRouter = GoRouter(
           child: ProductDetailPage(productId: productId),
         );
       },
-    ),
-    GoRoute(
-      path: '/cart',
-      builder: (context, state) => BlocProvider(
-        create: (context) => getIt<CartBloc>(),
-        child: const CartPage(),
-      ),
-    ),
-    GoRoute(
-      path: '/wishlist',
-      builder: (context, state) => BlocProvider(
-        create: (context) => getIt<WishlistBloc>(),
-        child: const WishlistPage(),
-      ),
     ),
   ],
 );

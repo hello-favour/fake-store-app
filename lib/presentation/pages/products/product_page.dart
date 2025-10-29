@@ -18,12 +18,21 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
+  bool _hasLoaded = false;
+
   @override
   void initState() {
     super.initState();
-    context.read<ProductBloc>().add(LoadProducts());
-    context.read<UserBloc>().add(LoadCachedUser());
-    context.read<UserBloc>().add(const LoadUser(1));
+    _loadDataOnce();
+  }
+
+  void _loadDataOnce() {
+    if (!_hasLoaded) {
+      context.read<ProductBloc>().add(LoadProducts());
+      context.read<UserBloc>().add(LoadCachedUser());
+      context.read<UserBloc>().add(const LoadUser(1));
+      _hasLoaded = true;
+    }
   }
 
   @override
@@ -49,82 +58,72 @@ class _ProductPageState extends State<ProductPage> {
       ),
       body: BlocBuilder<ProductBloc, ProductState>(
         builder: (context, state) {
-          if (state is ProductLoading) {
-            return const SpinnerView();
-          }
+          int index = 0;
+          if (state is ProductLoading)
+            index = 0;
+          else if (state is ProductError)
+            index = 1;
+          else if (state is ProductLoaded)
+            index = 2;
 
-          if (state is ProductError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(state.message),
-                  const Gap(16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25),
-                    child: AppButton(
-                      isPrimary: true,
-                      text: 'Retry',
-                      onPressed: () =>
-                          context.read<ProductBloc>().add(LoadProducts()),
-                    ),
-                  ),
-                ],
+          return IndexedStack(
+            index: index,
+            children: [
+              const Center(child: SpinnerView()),
+              Center(
+                child: state is ProductError
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(state.message),
+                          const Gap(16),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 25),
+                            child: AppButton(
+                              isPrimary: true,
+                              text: 'Retry',
+                              onPressed: () => context.read<ProductBloc>().add(
+                                LoadProducts(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : const SizedBox.shrink(),
               ),
-            );
-          }
-
-          if (state is ProductLoaded) {
-            return Column(
-              children: [
-                const Gap(10),
-                Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: state.products.length,
-                    itemBuilder: (context, index) {
-                      final product = state.products[index];
-                      final isInWishlist = state.wishlistProductIds.contains(
-                        product.id,
-                      );
-                      return ProductCard(
-                        product: product,
-                        isInWishlist: isInWishlist,
-                        onTap: () =>
-                            context.push('/product-detail/${product.id}'),
-                        onWishlistTap: () {
-                          context.read<ProductBloc>().add(
-                            ToggleWishlist(product),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ),
-              ],
-            );
-          }
-
-          return const SizedBox();
+              state is ProductLoaded
+                  ? Column(
+                      children: [
+                        const Gap(10),
+                        Expanded(
+                          child: ListView.builder(
+                            padding: const EdgeInsets.all(16),
+                            itemCount: state.products.length,
+                            itemBuilder: (context, index) {
+                              final product = state.products[index];
+                              final isInWishlist = state.wishlistProductIds
+                                  .contains(product.id);
+                              return ProductCard(
+                                product: product,
+                                isInWishlist: isInWishlist,
+                                onTap: () => context.push(
+                                  '/product-detail/${product.id}',
+                                ),
+                                onWishlistTap: () {
+                                  context.read<ProductBloc>().add(
+                                    ToggleWishlist(product),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    )
+                  : const SizedBox.shrink(),
+            ],
+          );
         },
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        onTap: (index) {
-          if (index == 1) context.push('/wishlist');
-          if (index == 2) context.push('/cart');
-        },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Wishlist',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag),
-            label: 'Cart',
-          ),
-        ],
       ),
     );
   }

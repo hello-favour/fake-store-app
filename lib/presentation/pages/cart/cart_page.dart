@@ -62,7 +62,7 @@ class _CartPageState extends State<CartPage> {
                       child: AppButton(
                         isPrimary: true,
                         text: 'Continue Shopping',
-                        onPressed: () => context.pop(),
+                        onPressed: () => context.go('/products'),
                       ),
                     ),
                   ],
@@ -143,24 +143,6 @@ class _CartPageState extends State<CartPage> {
           }
           return const SpinnerView();
         },
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 2,
-        onTap: (index) {
-          if (index == 0) context.go('/products');
-          if (index == 1) context.push('/wishlist');
-        },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Wishlist',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag),
-            label: 'Cart',
-          ),
-        ],
       ),
     );
   }
