@@ -25,8 +25,11 @@ class LogoutButton extends StatelessWidget {
           TextButton(
             onPressed: () {
               Navigator.pop(dialogContext);
-              getIt<AuthBloc>().add(LogoutRequested());
-              context.go('/');
+              final authBloc = getIt<AuthBloc>();
+              authBloc.add(LogoutRequested());
+              Future.delayed(const Duration(milliseconds: 100), () {
+                context.go('/');
+              });
             },
             child: const Text('Logout'),
           ),
