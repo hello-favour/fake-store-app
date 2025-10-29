@@ -12,15 +12,16 @@ class GetStartedPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.colorWhite,
-      body: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.45,
-              width: double.infinity,
-              child: Image.asset(Assets.png.getStarted.path, fit: BoxFit.cover),
-            ),
-            Expanded(
+      body: Column(
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.45,
+            width: double.infinity,
+            child: Image.asset(Assets.png.getStarted.path, fit: BoxFit.cover),
+          ),
+          Expanded(
+            child: SafeArea(
+              top: false,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Column(
@@ -47,8 +48,8 @@ class GetStartedPage extends StatelessWidget {
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
