@@ -42,13 +42,19 @@ final GoRouter appRouter = GoRouter(
         child: const LoginPage(),
       ),
     ),
+
     ShellRoute(
       builder: (context, state, child) {
+        int currentIndex = 0;
         final location = state.matchedLocation;
 
         if (location.startsWith('/wishlist')) {
+          currentIndex = 1;
         } else if (location.startsWith('/cart')) {
-        } else if (location.startsWith('/products')) {}
+          currentIndex = 2;
+        } else if (location.startsWith('/products')) {
+          currentIndex = 0;
+        }
 
         return MultiBlocProvider(
           providers: [
@@ -57,7 +63,7 @@ final GoRouter appRouter = GoRouter(
             BlocProvider(create: (context) => getIt<CartBloc>()),
             BlocProvider(create: (context) => getIt<WishlistBloc>()),
           ],
-          child: const MainScaffold(),
+          child: MainScaffold(currentIndex: currentIndex, child: child),
         );
       },
       routes: [
@@ -81,10 +87,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/product-detail/:id',
       builder: (context, state) {
-        final productId = state.pathParameters['id']!;
+        final productId = int.parse(state.pathParameters['id']!);
         return BlocProvider(
           create: (context) => getIt<ProductBloc>(),
-          child: ProductDetailPage(productId: productId),
+          child: ProductDetailPage(productId: productId.toString()),
         );
       },
     ),

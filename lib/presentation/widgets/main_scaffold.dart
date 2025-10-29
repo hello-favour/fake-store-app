@@ -1,27 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:fake_store/presentation/pages/products/product_page.dart';
-import 'package:fake_store/presentation/pages/wishlist/wishlist_page.dart';
-import 'package:fake_store/presentation/pages/cart/cart_page.dart';
+import 'package:go_router/go_router.dart';
 
-class MainScaffold extends StatefulWidget {
-  const MainScaffold({super.key});
+class MainScaffold extends StatelessWidget {
+  final Widget child;
+  final int currentIndex;
 
-  @override
-  State<MainScaffold> createState() => _MainScaffoldState();
-}
-
-class _MainScaffoldState extends State<MainScaffold> {
-  int _currentIndex = 0;
-
-  final List<Widget> _pages = const [ProductPage(), WishlistPage(), CartPage()];
+  const MainScaffold({
+    super.key,
+    required this.child,
+    required this.currentIndex,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _pages),
+      body: child,
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) => setState(() => _currentIndex = index),
+        currentIndex: currentIndex,
+        onTap: (index) => _onItemTapped(context, index),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
@@ -35,5 +31,19 @@ class _MainScaffoldState extends State<MainScaffold> {
         ],
       ),
     );
+  }
+
+  void _onItemTapped(BuildContext context, int index) {
+    switch (index) {
+      case 0:
+        context.go('/products');
+        break;
+      case 1:
+        context.go('/wishlist');
+        break;
+      case 2:
+        context.go('/cart');
+        break;
+    }
   }
 }

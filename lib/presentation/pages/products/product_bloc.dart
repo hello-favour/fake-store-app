@@ -5,7 +5,6 @@ import 'package:injectable/injectable.dart';
 import '../../../data/models/product_model.dart';
 import '../../../data/repositories/product_repository.dart';
 import '../../../data/repositories/cart_repository.dart';
-
 part 'product_event.dart';
 part 'product_state.dart';
 
